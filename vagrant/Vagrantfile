@@ -2,40 +2,51 @@ Vagrant.configure("2") do |config|
 
     config.vm.box = "ubuntu/jammy64"
 
-    # Para conectar na VM1 via ssh
-    # Entrar na ssh da vm2
+    # Para conectar na HOST via ssh
+    # Na Prod
+    # ssh-keygen -t ed25519 -C "vagrant@prod"
+    # cat ~/.ssh/id_ed25519.pub
+
+    # No Host
+    # mkdir -p ~/.ssh
+    # chmod 700 ~/.ssh
+    # echo 'chave_publica_da_prod' >> ~/.ssh/authorized_keys
+    # chmod 600 ~/.ssh/authorized_keys
+
+    # Na Prod
+    # ssh-keyscan -H 192.168.56.10 >> ~/.ssh/known_hosts
+    # cat ~/.ssh/known_hosts
+    # Chave privada da Prod
+    # cat ~/.ssh/id_ed25519
     # ssh vagrant@192.168.56.10
-    # yes
-    config.vm.define "vm2" do |vm2|
-        vm2.vm.hostname = "vm2"
-        vm2.vm.provider "virtualbox" do |vb|
-            vb.name = "VM2"
+
+    config.vm.define "prod" do |prod|
+        prod.vm.hostname = "prod"
+        prod.vm.provider "virtualbox" do |vb|
+            vb.name = "PROD"
             vb.memory = 1024
             vb.cpus = 1
         end
         
-        vm2.vm.synced_folder "../app", "/var/www/app"
-        vm2.vm.network "private_network", ip: "192.168.56.20"
-        vm2.vm.provision "shell", path: "scripts/setup-node.sh"
-        vm2.vm.provision "shell", path: "scripts/key-generate.sh"
-        vm2.vm.provision "shell", path: "scripts/save-key.sh"
+        prod.vm.synced_folder "../app", "/var/www/app"
+        prod.vm.network "private_network", ip: "192.168.56.20"
+        prod.vm.provision "shell", path: "scripts/setup-node.sh"
     end
 
     # Jenkins - senha inicial do admin:
     # sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-    config.vm.define "vm1" do |vm1|
-        vm1.vm.hostname = "vm1"
-        vm1.vm.provider "virtualbox" do |vb|
-            vb.name = "VM1"
+    config.vm.define "host" do |host|
+        host.vm.hostname = "host"
+        host.vm.provider "virtualbox" do |vb|
+            vb.name = "HOST"
             vb.memory = 1024
             vb.cpus = 1
         end
 
-        vm1.vm.network "forwarded_port", guest: 8080, host: 8050
-        vm1.vm.network "private_network", ip: "192.168.56.10"
-        vm1.vm.provision "shell", path: "scripts/setup-node.sh"
-        vm1.vm.provision "shell", path: "scripts/setup-java-jenkins.sh"
-        vm1.vm.provision "shell", path: "scripts/add-key.sh"
+        host.vm.network "forwarded_port", guest: 8080, host: 8050
+        host.vm.network "private_network", ip: "192.168.56.10"
+        host.vm.provision "shell", path: "scripts/setup-node.sh"
+        host.vm.provision "shell", path: "scripts/setup-java-jenkins.sh"
     end
 
 end
