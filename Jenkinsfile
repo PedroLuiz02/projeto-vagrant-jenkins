@@ -23,14 +23,8 @@ pipeline {
             }
         }
 
-                stage('Deploy') {
+        stage('Deploy') {
             steps {
-<<<<<<< HEAD
-                echo 'Mandando aplicação para VM app...'
-
-                sshagent(['app']) {
-                    sh "ssh vagrant@192.168.56.10 host"
-=======
                 echo "Enviando aplicacao para a VM prod..."
                 sshagent(['app']) {
                     sh '''
@@ -43,7 +37,6 @@ pipeline {
                         sleep 5
                         curl -f http://192.168.56.20:3000
                     '''
->>>>>>> 9c45e3acbd7e11975929144567e8550bdf36a6fb
                 }
             }
         }
