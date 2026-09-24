@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
     # Na Prod
     # mkdir -p ~/.ssh
     # chmod 700 ~/.ssh
-    # echo 'colocar_chave_publica_do_host' >> ~/.ssh/authorized_keys  (colocar a chave real)
+    # echo 'colocar_chave_publica_do_host' >> ~/.ssh/authorized_keys (colocar a chave real)
     # chmod 600 ~/.ssh/authorized_keys
     # cat ~/.ssh/authorized_keys  (conferir se a chave foi adicionada)
 
