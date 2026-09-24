@@ -2,23 +2,24 @@ Vagrant.configure("2") do |config|
 
     config.vm.box = "ubuntu/jammy64"
 
-    # Para conectar na HOST via ssh
-    # Na Prod
-    # ssh-keygen -t ed25519 -C "vagrant@prod"
-    # cat ~/.ssh/id_ed25519.pub
-
+    # Para conectar na PROD via ssh
     # No Host
+    # ssh-keygen -t ed25519 -C "vagrant@host"
+    # cat ~/.ssh/id_ed25519.pub (Chave pública)
+
+    # Na Prod
     # mkdir -p ~/.ssh
     # chmod 700 ~/.ssh
-    # echo 'chave_publica_da_prod' >> ~/.ssh/authorized_keys
+    # echo 'colocar_chave_publica_do_host' >> ~/.ssh/authorized_keys  (colocar a chave real)
     # chmod 600 ~/.ssh/authorized_keys
+    # cat ~/.ssh/authorized_keys  (conferir se a chave foi adicionada)
 
-    # Na Prod
-    # ssh-keyscan -H 192.168.56.10 >> ~/.ssh/known_hosts
+    # No Host
+    # ssh-keyscan -H 192.168.56.20 >> ~/.ssh/known_hosts
     # cat ~/.ssh/known_hosts
-    # Chave privada da Prod
+    # Chave privada do Host
     # cat ~/.ssh/id_ed25519
-    # ssh vagrant@192.168.56.10
+    # ssh vagrant@192.168.56.20
 
     config.vm.define "prod" do |prod|
         prod.vm.hostname = "prod"
@@ -28,13 +29,12 @@ Vagrant.configure("2") do |config|
             vb.cpus = 1
         end
         
-        prod.vm.synced_folder "../app", "/var/www/app"
         prod.vm.network "private_network", ip: "192.168.56.20"
         prod.vm.provision "shell", path: "scripts/setup-node.sh"
     end
 
-    # Jenkins - senha inicial do admin:
-    # sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+    # abrir Jenkins em localhost:8050
+    # Jenkins - para ver a senha inicial do admin: sudo cat /var/lib/jenkins/secrets/initialAdminPassword
     config.vm.define "host" do |host|
         host.vm.hostname = "host"
         host.vm.provider "virtualbox" do |vb|

@@ -25,12 +25,15 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent("Ola"]) {
-                    sh ""
+                echo 'Mandando aplicação para VM app...'
+
+                sshagent(['app']) {
+                    sh "ssh vagrant@192.168.56.10 host"
                 }
             }
         }
     }
+    
     post{
         success{
             echo "Pipeline executada com sucesso!"
